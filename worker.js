@@ -29,7 +29,7 @@ export default {
 
             // 🧠 Generate image from prompt
             const result = await env.AI.run(
-                "@cf/stabilityai/stable-diffusion-xl-base-1.0",
+                "google/nano-banana",
                 { prompt }
             );
 
