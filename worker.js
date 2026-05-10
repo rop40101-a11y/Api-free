@@ -1,78 +1,54 @@
 export default {
   async fetch(request, env) {
 
-    // API KEY CHECK
     const API_KEY = env.API_KEY;
     const auth = request.headers.get("Authorization");
 
     if (auth !== `Bearer ${API_KEY}`) {
-      return json({
-        success: false,
+      return Response.json({
         error: "Unauthorized"
-      }, 401);
+      }, { status: 401 });
     }
 
-    // ONLY POST ALLOWED
     if (request.method !== "POST") {
-      return json({
-        success: false,
-        error: "Only POST requests allowed"
-      }, 405);
+      return Response.json({
+        error: "Only POST allowed"
+      }, { status: 405 });
     }
 
     try {
 
-      // GET BODY
-      const body = await request.json();
-      const prompt = body.prompt;
+      const { prompt } = await request.json();
 
       if (!prompt) {
-        return json({
-          success: false,
-          error: "Prompt is required"
-        }, 400);
+        return Response.json({
+          error: "Prompt required"
+        }, { status: 400 });
       }
 
-      // GENERATE IMAGE
-      const image = await env.AI.run(
+      const result = await env.AI.run(
         "@cf/black-forest-labs/flux-1-schnell",
         {
-          prompt: prompt,
-
-          // Optional settings
+          prompt,
           width: 1024,
           height: 1024,
           num_steps: 4
         }
       );
 
-      // RETURN IMAGE
-      return new Response(image, {
+      // IMPORTANT
+      return new Response(result, {
         headers: {
-          "Content-Type": "image/jpeg"
+          "content-type": "image/png"
         }
       });
 
-    } catch (err) {
+    } catch (e) {
 
-      return json({
-        success: false,
-        error: err.message
-      }, 500);
+      return Response.json({
+        error: e.message
+      }, { status: 500 });
 
     }
   }
-};
-
-// JSON RESPONSE FUNCTION
-function json(data, status = 200) {
-  return new Response(
-    JSON.stringify(data),
-    {
-      status,
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  );
 }
