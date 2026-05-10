@@ -34,7 +34,7 @@ export default {
             );
 
             return new Response(result, {
-                headers: { "Content-Type": "image/jpeg" },
+                headers: { "Content-Type": "image/jpg" },
             });
         } catch (err) {
             return json({ error: "Failed to generate image", details: err.message }, 500);
