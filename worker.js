@@ -29,7 +29,7 @@ export default {
 
             // 🧠 Generate image from prompt
             const result = await env.AI.run(
-                "google/nano-banana",
+                "@cf/blackforestlabs/flux-1-schnell",
                 { prompt }
             );
 
